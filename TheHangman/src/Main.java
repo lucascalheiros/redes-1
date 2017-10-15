@@ -1,17 +1,15 @@
-import java.io.IOException;
+import java.util.Scanner;
 
 public class Main {
-	
+
 	public static void main(String[] args) {
 		Server server = new Server(12345);
-		Thread t = new Thread(server);
-		t.start();
-		try {
-			server.receiveMsg();
-		} catch(IOException e) {
-			
+		Scanner read = new Scanner(System.in);
+		String message;
+		while (read.hasNextLine()) {
+			message = read.nextLine();
+			server.sendMessage(message);
 		}
-		
+		read.close();
 	}
-	
 }
