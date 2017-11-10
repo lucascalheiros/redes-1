@@ -15,6 +15,7 @@ public class ClientSenderThread implements Runnable {
 		
 
 			serverOutput.println(id+" "+input.nextLine());
+			System.out.println("enviado");
 
 		}
 		input.close();

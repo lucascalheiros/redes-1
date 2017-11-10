@@ -22,9 +22,7 @@ public class Server {
 			Thread tClientAccepter = new Thread(accepter);
 			tClientAccepter.start();
 			
-			ServerReceiverThread receiver = new ServerReceiverThread(this);		//thread para receber mensagens dos clientes
-			Thread tClientReceiver = new Thread(receiver);
-			tClientReceiver.start();
+		
 			
 			System.out.println("Servidor criado com sucesso");
 		} catch (IOException e) {
@@ -51,7 +49,9 @@ public class Server {
 		players.add(player);
 		output.println(id);
 		
-
+		ServerReceiverThread receiver = new ServerReceiverThread(this, input);	
+		Thread tClientReceiver = new Thread(receiver);
+		tClientReceiver.start();
 
 	}
 	
