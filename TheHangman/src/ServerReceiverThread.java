@@ -1,39 +1,27 @@
-import java.io.IOException;
-import java.net.Socket;
 import java.util.Scanner;
 
 public class ServerReceiverThread implements Runnable {
 	private Server server;
+	private Scanner channel;
+	private String message;
+	private int id;
 
-	public ServerReceiverThread(Server server) {
+	public ServerReceiverThread(Server server, Scanner channel) {
 		this.server = server;
-
+		this.channel = channel;
 	}
 
-	// alterar***********************************
 	public void run() {
-		try {
-			boolean verif;
-			Scanner channel;
-			Socket actualClient;
-			while (true) {
-				// parece que o compilador otimiza o codigo se não tiver o comando abaixo
-				System.out.print("");
+		String[] split;
+		while (channel.hasNextLine()) {
+			message = channel.nextLine();
+			split = message.split(" ");
+			id = Integer.valueOf(split[0]);
+			message = split[1];
+			System.out.println("msg recebida id"+ id);
+			TurnManager.mapTurnMessage.get(id).putMessage(message.charAt(0));
 
-				// função que envia a mensagem dos clientes ao servidor de forma alternada em
-				// ordem de entrada ao servidor do cliente
-				for (int i = 0; i < server.totalClients(); i++) {
-					actualClient = server.getClient(i);
-					channel = new Scanner(actualClient.getInputStream());
-					verif = true;
-					while (verif && channel.hasNextLine()) {
-						verif = false;
-						System.out.println(channel.nextLine());
-					}
-				}
-			}
-		} catch (IOException e) {
-			System.err.println("Erro ao receber mensagem");
 		}
+
 	}
 }

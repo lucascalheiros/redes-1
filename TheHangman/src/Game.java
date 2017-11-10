@@ -1,211 +1,214 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Game {
-	
+
 	private String word;
 	private String visibleWord = "";
-	private int life = 6;
 	private String guesses = "";
-	private Player players[];
-	private int currentPlayer = 0;
+	private ArrayList<Player> players = new ArrayList<Player>();
+	private Server server;
 	
-	public Game(String word, Player players[]) {
+	public Game(Server server, String word, ArrayList<Player> players) {
+		this.server = server;
 		this.word = word;
 		this.players = players;
-		for(int i = 0; i < word.length(); i++) {
+		for (int i = 0; i < word.length(); i++) {
 			this.visibleWord += "_";
 		}
 	}
-	
+
 	public void newWord(String word) {
 		this.word = word;
 		this.visibleWord = "";
-		for(int i = 0; i < word.length(); i++) {
+		for (int i = 0; i < word.length(); i++) {
 			this.visibleWord += "_";
 		}
 	}
-	
+
 	public String getWord() {
 		return this.word;
 	}
-	
-	public int tryLetter(Character letter) throws Exception {
+
+	public void tryLetter(Player player, Character letter) throws Exception {
 		int matches = 0;
 		String tmpWord = "";
-		for(int i = 0; i < word.length(); i++) {
-			if(word.charAt(i) == letter && visibleWord.charAt(i) == '_') {
+		for (int i = 0; i < word.length(); i++) {
+			if (word.charAt(i) == letter && visibleWord.charAt(i) == '_') {
 				matches++;
 				tmpWord += String.valueOf(word.charAt(i));
-			}
-			else {
+			} else {
 				tmpWord += String.valueOf(visibleWord.charAt(i));
 			}
 		}
-		
-		if(matches == 0){ // Nenhuma letra igual na palavra
-			this.life--;
-			this.drawHangman();
+
+		if (matches == 0) { // Nenhuma letra igual na palavra
+			player.wrongAnswer();
+			System.out.println(player.getNome() + "'s wrong play");
+			server.sendMessage(player.getNome() + "'s wrong play");
+			Thread.sleep(3000);
+		} else {
+			System.out.println(player.getNome() + "'s right play. Matches: " + matches);
+			server.sendMessage(player.getNome() + "'s right play. Matches: " + matches);
+			Thread.sleep(3000);
 		}
-		
-		this.guesses += letter+" ";
+
+		this.guesses += letter + " ";
 		this.visibleWord = tmpWord;
-		return matches;
+		player.addMatches(matches);
 	}
-	
+
 	public String getVisibleWord() {
 		return visibleWord;
 	}
-	
-	public boolean checkWin(){
-		if(this.word.equals(this.visibleWord)){
-			return true; // Vitória
-		}else{
+
+	public boolean checkWin() {
+		if (this.word.equals(this.visibleWord)) {
+			return true; // Vitï¿½ria
+		} else {
 			return false; // Jogo continua
 		}
 	}
-	
-	public void drawHangman(){
-		switch(this.life){
+
+	public void drawHangman(Player player) {
+		System.out.println(player.getNome() + "'s");
+		server.sendMessage(player.getNome() + "'s");
+		switch (player.getLife()) {
 		case 6:
-			System.out.println("   ______________ \n"+
-							   "   |         |    \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "___|______________");
+			System.out.println("   ______________ \n" + "   |         |    \n" + "   |              \n"
+					+ "   |              \n" + "   |              \n" + "   |              \n" + "   |              \n"
+					+ "   |              \n" + "___|______________");
+			server.sendMessage("   ______________ \n" + "   |         |    \n" + "   |              \n"
+					+ "   |              \n" + "   |              \n" + "   |              \n" + "   |              \n"
+					+ "   |              \n" + "___|______________");
 			break;
 		case 5:
-			System.out.println("   ______________ \n"+
-							   "   |         |    \n"+
-							   "   |        ( )   \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "___|______________");
+			System.out.println("   ______________ \n" + "   |         |    \n" + "   |        ( )   \n"
+					+ "   |              \n" + "   |              \n" + "   |              \n" + "   |              \n"
+					+ "   |              \n" + "___|______________");
+			server.sendMessage("   ______________ \n" + "   |         |    \n" + "   |        ( )   \n"
+					+ "   |              \n" + "   |              \n" + "   |              \n" + "   |              \n"
+					+ "   |              \n" + "___|______________");
 			break;
 		case 4:
-			System.out.println("   ______________ \n"+
-							   "   |         |    \n"+
-							   "   |        ( )   \n"+
-							   "   |         |    \n"+
-							   "   |         |    \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "___|______________");
+			System.out.println("   ______________ \n" + "   |         |    \n" + "   |        ( )   \n"
+					+ "   |         |    \n" + "   |         |    \n" + "   |              \n" + "   |              \n"
+					+ "   |              \n" + "___|______________");
+			server.sendMessage("   ______________ \n" + "   |         |    \n" + "   |        ( )   \n"
+					+ "   |         |    \n" + "   |         |    \n" + "   |              \n" + "   |              \n"
+					+ "   |              \n" + "___|______________");
 			break;
 		case 3:
-			System.out.println("   ______________ \n"+
-							   "   |         |    \n"+
-							   "   |        ( )   \n"+
-							   "   |        /|    \n"+
-							   "   |         |    \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "___|______________");
+			System.out.println("   ______________ \n" + "   |         |    \n" + "   |        ( )   \n"
+					+ "   |        /|    \n" + "   |         |    \n" + "   |              \n" + "   |              \n"
+					+ "   |              \n" + "___|______________");
+			server.sendMessage("   ______________ \n" + "   |         |    \n" + "   |        ( )   \n"
+					+ "   |        /|    \n" + "   |         |    \n" + "   |              \n" + "   |              \n"
+					+ "   |              \n" + "___|______________");
 			break;
 		case 2:
-			System.out.println("   ______________ \n"+
-							   "   |         |    \n"+
-							   "   |        ( )   \n"+
-							   "   |        /|\\   \n"+
-							   "   |         |    \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "___|______________");
+			System.out.println("   ______________ \n" + "   |         |    \n" + "   |        ( )   \n"
+					+ "   |        /|\\   \n" + "   |         |    \n" + "   |              \n" + "   |              \n"
+					+ "   |              \n" + "___|______________");
+			server.sendMessage("   ______________ \n" + "   |         |    \n" + "   |        ( )   \n"
+					+ "   |        /|\\   \n" + "   |         |    \n" + "   |              \n" + "   |              \n"
+					+ "   |              \n" + "___|______________");
 			break;
 		case 1:
-			System.out.println("   ______________ \n"+
-							   "   |         |    \n"+
-							   "   |        ( )   \n"+
-							   "   |        /|\\   \n"+
-							   "   |         |    \n"+
-							   "   |        /     \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "___|______________");
+			System.out.println("   ______________ \n" + "   |         |    \n" + "   |        ( )   \n"
+					+ "   |        /|\\   \n" + "   |         |    \n" + "   |        /     \n" + "   |              \n"
+					+ "   |              \n" + "___|______________");
+			server.sendMessage("   ______________ \n" + "   |         |    \n" + "   |        ( )   \n"
+					+ "   |        /|\\   \n" + "   |         |    \n" + "   |        /     \n" + "   |              \n"
+					+ "   |              \n" + "___|______________");
 			break;
 		case 0:
-			System.out.println("   ______________ \n"+
-							   "   |         |    \n"+
-							   "   |        ( )   \n"+
-							   "   |        /|\\   \n"+
-							   "   |         |    \n"+
-							   "   |        / \\   \n"+
-							   "   |              \n"+
-							   "   |              \n"+
-							   "___|______________");
+			System.out.println("   ______________ \n" + "   |         |    \n" + "   |        ( )   \n"
+					+ "   |        /|\\   \n" + "   |         |    \n" + "   |        / \\   \n"
+					+ "   |              \n" + "   |              \n" + "___|______________");
+			server.sendMessage("   ______________ \n" + "   |         |    \n" + "   |        ( )   \n"
+					+ "   |        /|\\   \n" + "   |         |    \n" + "   |        / \\   \n"
+					+ "   |              \n" + "   |              \n" + "___|______________");
 			break;
 		}
-		
+
 	}
-	
-	public void printGuesses(){
+
+	public void printGuesses() {
 		System.out.println("Guesses: " + this.guesses);
+		server.sendMessage("Guesses: " + this.guesses);
 	}
-	
-	public void run() throws Exception{
+
+	public void run() throws Exception {
 		Scanner read = new Scanner(System.in);
 		boolean win = false;
 		Character guess;
-		
-		this.drawHangman();
-		
-		while(!win){
+		int currentPlayerId = 0;
+		Player player = null;
+		// this.drawHangman();
+
+		while (!win) {
+
+			player = players.get(currentPlayerId);
+
+			this.drawHangman(player);
+
 			System.out.println(this.visibleWord);
+			server.sendMessage(this.visibleWord);
 			this.printGuesses();
-			
-			System.out.println(players[currentPlayer].getNome()+"'s Turn:"); //Turno
-			System.out.println("Matches: "+players[currentPlayer].getMatches()); //Pontuação
-			
-			guess = read.next().charAt(0); // Garantindo que pegue apenas o primeiro caractere
-			this.players[currentPlayer].addMatches(this.tryLetter(guess)); // Adiciona a pontuação ao Jogador atual
-			win = this.checkWin();
-			
-			if(win){
-				String winner = players[0].getNome();
-				int bestPonctuation = players[0].getMatches();
-				
-				for(int i = 0; i < players.length; i++){
-					System.out.println(players[i].getNome()+"'s Matches: "+
-									   players[i].getMatches());
-					if(players[i].getMatches() > bestPonctuation){
-						winner = players[i].getNome();
-						bestPonctuation = players[i].getMatches();
-					}
+
+			System.out.println(player.getNome() + "'s Turn:"); // Turno
+			server.sendMessage(player.getNome() + "'s Turn:");
+			System.out.println("Matches: " + player.getMatches()); // Pontuaï¿½ï¿½o
+			server.sendMessage("Matches: " + player.getMatches());
+			if (player.getLife() != 0) {
+				guess = ' ';
+				TurnManager.mapTurnMessage.get(currentPlayerId).setTurn();
+				while(guess == ' ') {
+					System.out.print("");
+					Thread.sleep(500);
+					guess = TurnManager.mapTurnMessage.get(currentPlayerId).readMessage();
 				}
-				System.out.println(winner + " WINS!");
+				this.tryLetter(player, guess); // Adiciona a pontuaï¿½ï¿½o ao Jogador atual
+				win = this.checkWin();
+
+				if (win) {
+					String winner = players.get(0).getNome();
+					int bestPonctuation = players.get(0).getMatches();
+
+					for (int i = 0; i < players.size(); i++) {
+						System.out.println(players.get(i).getNome() + "'s Matches: " + players.get(i).getMatches());
+						if (players.get(i).getMatches() > bestPonctuation) {
+							winner = players.get(i).getNome();
+							bestPonctuation = players.get(i).getMatches();
+						}
+					}
+					System.out.println(winner + " WINS!");
+					server.sendMessage(winner + " WINS!");
+				}
+			} else {
+				System.out.println(player.getNome() + " YOU DIED!");
+				server.sendMessage(player.getNome() + " YOU DIED!");
+				Thread.sleep(3000);
 			}
-			
-			if(this.life == 0){
-				System.out.println("YOU DIED!");
-				break;
-			}
-			
-			if(currentPlayer == 2){ // Resetar se o 3º jogador jogou
-				currentPlayer = 0;
-			}else{
-				currentPlayer++;
+			System.out.println("\n\n");
+			server.sendMessage("\n\n");
+			currentPlayerId++;
+			if (currentPlayerId >= players.size()) {
+				currentPlayerId = 0;
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) throws Exception {
-		Player player1 = new Player("Joao", 0);
-		Player player2 = new Player("Jose", 1);
-		Player player3 = new Player("Pedro", 2);
+	
+		Server server = new Server(12345);
+		Scanner read = new Scanner(System.in);
+		System.out.println("Aperte enter para comeÃ§ar o jogo");
+		read.nextLine();
 		
-		Player players[] = {player1, player2, player3};
-		
-		Game game = new Game("testando", players);
+		Game game = new Game( server, "testando", Player.players);
 		game.run();
 	}
-	
+
 }
