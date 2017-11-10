@@ -19,5 +19,8 @@ public class Player {
 	public int getId(){return this.id;}
 	
 	public int getMatches(){return this.matches;}
-
+	
+	public String toString(){
+		return "Player ID: " + id +"\t\tNome: " + nome + "\nPontos: " + matches;
+	}
 }
