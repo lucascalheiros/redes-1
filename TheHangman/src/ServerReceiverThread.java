@@ -18,7 +18,6 @@ public class ServerReceiverThread implements Runnable {
 			split = message.split(" ");
 			id = Integer.valueOf(split[0]);
 			message = split[1];
-			System.out.println("msg recebida id"+ id);
 			TurnManager.mapTurnMessage.get(id).putMessage(message.charAt(0));
 
 		}
