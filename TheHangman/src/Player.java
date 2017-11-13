@@ -7,11 +7,7 @@ public class Player {
 	private int id;
 	private int matches = 0;
 	private int life = 6;
-
-<<<<<<< HEAD
-=======
 	
->>>>>>> 802097ae90735bf9f041303e219ac32f5f662c01
 	public Player(String nome, int id){
 		this.nome = nome;
 		this.id = id;
