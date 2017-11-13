@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
@@ -199,15 +200,19 @@ public class Game {
 			}
 		}
 	}
-
 	public static void main(String[] args) throws Exception {
-	
+
 		Server server = new Server(12345);
 		Scanner read = new Scanner(System.in);
 		System.out.println("Aperte enter para começar o jogo");
 		read.nextLine();
-		
-		Game game = new Game( server, "testando", Player.players);
+
+		Random num = new Random();
+
+		String[] listStr= {"coordenada", "gerador", "testando", "seguinte", "programar",
+				"brasil", "cadeira", "porta", "computador", "estranho"};
+		String word = listStr[num.nextInt(10)];
+		Game game = new Game( server, word, Player.players);
 		game.run();
 	}
 
