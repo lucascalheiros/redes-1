@@ -7,8 +7,12 @@ public class Player {
 	private int id;
 	private int matches = 0;
 	private int life = 6;
+<<<<<<< HEAD
 
 
+=======
+	
+>>>>>>> e011b91027400a029f26d12dd84119d19f2d6b90
 	public Player(String nome, int id){
 		this.nome = nome;
 		this.id = id;
